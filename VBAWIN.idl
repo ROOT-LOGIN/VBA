@@ -1,0 +1,118 @@
+// VBAWIN.idl : VBAWIN 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(VBAWIN.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+cpp_quote("#include \"../Include/Vbaext.h\"")
+
+[
+	uuid(F42BC042-4407-4FC7-8EB2-7E5CD1F1671F),
+	version(1.0)
+]
+library VBAWINLib
+{
+	importlib("stdole2.tlb");
+	importlib("../Debug/VBE6EXT.OLB");
+
+[
+	local,
+	uuid(F700F353-4B1D-49A1-86C0-8C46121D1EC5),
+	helpstring("VBAWIN Application Interface."),
+	dual,
+	oleautomation
+]
+interface IVBAWINApp : IDispatch
+{
+	[propget, helpstring("The VBAWIN application object.")]
+	HRESULT Application([out, retval] IVBAWINApp** ppApp);
+
+	[propget, helpstring("The parent of current VBA model.")]
+	HRESULT Parent([out, retval] IVBAWINApp** ppApp);
+
+	[propget, helpstring("The code name of the VBAWIN application.")]
+	HRESULT Name([out, retval] LPBSTR name);
+
+	[helpstring("Alert user a message.")]
+	HRESULT Alert([in] BSTR message);
+
+	[propget, helpstring("The current VBE object.")]
+	HRESULT VBE([out, retval] VBE** ppVbe);
+};
+
+[
+	local,
+	uuid(AB204304-A711-4457-96E0-AE1CA19D037E),
+	helpstring("VBAWIN Project Interface."),
+	dual,
+	oleautomation
+]
+interface IVBAWINProj : IDispatch
+{
+	[propget, helpstring("The VBAWIN application object.")]
+	HRESULT Application([out, retval] IVBAWINApp** ppApp);
+
+	[propget, helpstring("The parent of current VBA model.")]
+	HRESULT Parent([out, retval] IVBAWINApp** ppApp);
+
+	[propget, helpstring("The version string of VBAWIN project.")]
+	HRESULT Version([out, retval] LPBSTR name);
+
+	[helpstring("Notify VBAWIN application an event.")]
+	HRESULT Notify([in] long dwCode);
+
+	[propget, helpstring("Get the path for saving datas.")]
+	HRESULT Location([out, retval] BSTR* lpbstrPath);
+	[propput, helpstring("Set the path for saving datas.")]
+	HRESULT Location([in] BSTR bstrPath);
+
+	[propget, helpstring("Get the token for reading or writing datas.")]
+	HRESULT Token([out, retval] BSTR* lpbstrToken);
+	[propput, helpstring("Set the path for reading or writing datas.")]
+	HRESULT Token([in] BSTR bstrToken);
+};
+
+[
+	local,
+	uuid(A653648A-B6D1-40AB-A782-FAA3C13AA172),
+	helpstring("VBAWIN Project Source Interface."),
+	dual,
+	oleautomation
+]
+interface _VBAWINProjSource : IDispatch
+{
+	[helpstring("Notify a new job has started.")]
+	void Started([in] long dwCode);
+	[helpstring("Notify a new job has finished.")]
+	void Finished([in] long dwCode);
+	[helpstring("Notify a query is running.")]
+	void Query([in] long dwCode, [in] BSTR bstrQueryString);
+};
+
+	[
+		uuid(BB80F450-ABEE-419E-B684-8CCB74945CF0),
+		helpstring("VBAWIN Application Object"),
+		version(1.0),
+		appobject
+	]
+	coclass VBAWINApp
+	{
+		[default] interface IVBAWINApp;
+	};
+
+			
+	[
+		uuid(A2743198-5575-48A7-AF89-E8BD7AD0F0D9),
+		helpstring("VBAWIN Project Object."),
+		version(1.0)
+	]
+	coclass VBAWINProj
+	{
+		[default] interface IVBAWINProj;
+		[source] dispinterface _VBAWINProjSource;
+	};
+};
+
